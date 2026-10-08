@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Publicar mi coche · AutoNovaX</title>
+<link rel="icon" type="image/png" href="Emblema%20Automotriz%20AN%20Autonovax.png">
+<link rel="stylesheet" href="styles.css">
+<style>
+.publish-hero{background:linear-gradient(120deg,#111827,#253047);color:#fff;padding:55px 20px}
+.publish-wrap{max-width:1050px;margin:auto}.publish-hero h1{font-size:44px;margin:8px 0}
+.publish-hero p{color:#d4d8df;font-size:17px;max-width:720px}
+.publish-card{background:#fff;border:1px solid #e2e5ea;border-radius:16px;padding:28px;margin:30px auto 50px;box-shadow:0 12px 35px #1112}
+.form-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:15px}.form-group{display:flex;flex-direction:column;gap:7px}.form-group.full{grid-column:1/-1}
+.form-group label{font-size:12px;font-weight:800;color:#4b5563}.form-group input,.form-group select,.form-group textarea{border:1px solid #d9dde4;border-radius:9px;padding:13px;font:inherit}
+.form-group textarea{min-height:140px;resize:vertical}.photo-box{border:2px dashed #cfd5dd;border-radius:12px;padding:22px;text-align:center;background:#f8f9fb}
+.publish-note{font-size:12px;color:#687386;line-height:1.6;margin-top:10px}.publish-actions{display:flex;gap:12px;align-items:center;margin-top:24px}
+@media(max-width:700px){.form-grid{grid-template-columns:1fr}.publish-hero h1{font-size:34px}.publish-card{padding:20px}}
+</style>
+</head>
+<body>
+<header class="topbar">
+<a class="logo" href="https://autonovaxx-hue.github.io/"><img src="Emblema%20Automotriz%20AN%20Autonovax.png" alt="AutoNovaX"></a>
+<nav><a href="index.html#coches">Coches</a><a href="index.html#favoritos">Favoritos <b>0</b></a><a href="guia-autonovax.html">Guía AutoNovaX</a><a href="quienes-somos.html">Quiénes somos</a><a href="faq.html">FAQ</a><a href="index.html#contacto">Contacto</a></nav>
+<a href="publicar.html" class="btn btn-red">+ Publicar mi coche</a>
+</header>
+<section class="publish-hero"><div class="publish-wrap"><div class="eyebrow">AUTONOVAX MARKETPLACE</div><h1>Publica tu coche</h1><p>Crea tu anuncio y presenta tu vehículo de forma profesional a compradores de AutoNovaX.</p></div></section>
+<main class="publish-wrap">
+<form class="publish-card" onsubmit="return publish(event)">
+<h2>Datos del vehículo</h2>
+<div class="form-grid">
+<div class="form-group"><label>Marca *</label><input required placeholder="Ej. Mercedes-Benz"></div>
+<div class="form-group"><label>Modelo *</label><input required placeholder="Ej. GLC 220 Coupé"></div>
+<div class="form-group"><label>Año *</label><input required type="number" min="1950" max="2027" placeholder="2022"></div>
+<div class="form-group"><label>Precio (€) *</label><input required type="number" min="0" placeholder="38500"></div>
+<div class="form-group"><label>Kilómetros *</label><input required type="number" min="0" placeholder="120500"></div>
+<div class="form-group"><label>Combustible *</label><select required><option value="">Seleccionar</option><option>Gasolina</option><option>Diésel</option><option>Híbrido</option><option>Eléctrico</option><option>GLP</option></select></div>
+<div class="form-group"><label>Cambio *</label><select required><option value="">Seleccionar</option><option>Manual</option><option>Automático</option></select></div>
+<div class="form-group"><label>Carrocería</label><select><option value="">Seleccionar</option><option>SUV</option><option>Coupé</option><option>Berlina</option><option>Turismo</option><option>Familiar</option><option>Cabrio</option><option>Furgoneta</option></select></div>
+<div class="form-group"><label>Color</label><input placeholder="Ej. Plata"></div>
+<div class="form-group"><label>Potencia (CV)</label><input type="number" placeholder="194"></div>
+<div class="form-group"><label>Ubicación *</label><input required placeholder="Ej. Almería"></div>
+<div class="form-group"><label>Vendedor *</label><select required><option value="">Seleccionar</option><option>Particular</option><option>Profesional</option><option>Concesionario</option></select></div>
+<div class="form-group full"><label>Fotografías</label><div class="photo-box"><strong>📸 Añade las fotos de tu coche</strong><p class="publish-note">Puedes seleccionar varias imágenes.</p><input type="file" accept="image/*" multiple></div><p class="publish-note">El almacenamiento real de anuncios y fotos se conectará en el siguiente paso.</p></div>
+<div class="form-group full"><label>Descripción *</label><textarea required placeholder="Describe el estado, equipamiento, mantenimiento e historial del vehículo."></textarea></div>
+<div class="form-group"><label>Nombre del vendedor *</label><input required placeholder="Tu nombre o empresa"></div>
+<div class="form-group"><label>Teléfono / WhatsApp *</label><input required type="tel" placeholder="+34 600 00 00 00"></div>
+<div class="form-group full"><label>Email *</label><input required type="email" placeholder="tu@email.com"></div>
+</div>
+<div class="publish-actions"><button class="btn btn-red" type="submit">Publicar anuncio</button><a href="index.html">← Volver a vehículos</a></div>
+<p id="msg" class="publish-note"></p>
+</form>
+</main>
+<footer><div><a class="logo" href="https://autonovaxx-hue.github.io/">AutoNovaX</a><p>El Zapillo, Almería · 9:30–18:30</p><p>Vehículos de ocasión · Atención personalizada</p></div><div><p><strong>Contacto</strong></p><p>+34 600 23 90 91</p><p>autonovaxx@gmail.com</p><p>WhatsApp disponible</p></div><div><p><strong>Información</strong></p><p><a href="quienes-somos.html">Quiénes somos</a></p><p><a href="faq.html">Preguntas frecuentes</a></p><p><a href="guia-autonovax.html">Guía AutoNovaX</a></p></div><div><p><strong>Legal</strong></p><p><a href="aviso-legal.html">Aviso legal</a></p><p><a href="politica-privacidad.html">Privacidad</a></p><p><a href="politica-cookies.html">Cookies</a></p></div></footer>
+<script>function publish(e){e.preventDefault();document.getElementById('msg').textContent='Formulario preparado. En el siguiente paso conectaremos anuncios y fotografías a una base de datos para que se publiquen de verdad.';return false;}</script>
+</body>
+</html>
