@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AutoNovaX — Coches de ocasión</title>
+<meta name="description" content="AutoNovaX: portal profesional de vehículos de ocasión. Busca, filtra, compara y contacta.">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<header class="topbar">
+  <a class="logo" href="index.html"><span>Auto</span>NovaX</a>
+  <nav>
+    <a href="#coches">Coches</a><a href="#favoritos">Favoritos <b id="favCount">0</b></a>
+    <a href="#contacto">Contacto</a>
+  </nav>
+  <button class="btn btn-light" onclick="openLogin()">Iniciar sesión</button>
+</header>
+
+<section class="hero">
+  <div class="hero-inner">
+    <p class="eyebrow">AUTO NOVAX · ALMERÍA</p>
+    <h1>Encuentra tu próximo coche.</h1>
+    <p class="hero-copy">Busca entre vehículos seleccionados y encuentra el que encaja contigo.</p>
+
+    <div class="searchbox">
+      <div class="field"><label>Marca</label><select id="makeFilter"><option value="">Todas</option></select></div>
+      <div class="field"><label>Modelo</label><select id="modelFilter"><option value="">Todos</option></select></div>
+      <div class="field"><label>Precio máximo</label><input id="priceFilter" type="number" placeholder="€"></div>
+      <div class="field"><label>Kilómetros máximo</label><input id="kmFilter" type="number" placeholder="km"></div>
+      <button class="btn btn-red" onclick="applyFilters()">Buscar</button>
+    </div>
+    <button class="more-link" onclick="document.getElementById('advanced').classList.toggle('open')">＋ Más filtros</button>
+    <div id="advanced" class="advanced">
+      <div class="field"><label>Año desde</label><input id="yearFilter" type="number" placeholder="2020"></div>
+      <div class="field"><label>Combustible</label><select id="fuelFilter"><option value="">Todos</option><option>Diésel</option><option>Gasolina</option><option>Híbrido</option><option>Eléctrico</option></select></div>
+      <div class="field"><label>Cambio</label><select id="gearFilter"><option value="">Todos</option><option>Automático</option><option>Manual</option></select></div>
+      <div class="field"><label>Carrocería</label><select id="bodyFilter"><option value="">Todas</option><option>SUV</option><option>Berlina</option><option>Coupé</option><option>Compacto</option><option>Familiar</option></select></div>
+      <div class="field"><label>Color</label><select id="colorFilter"><option value="">Todos</option><option>Plata</option><option>Negro</option><option>Blanco</option><option>Gris</option><option>Azul</option></select></div>
+      <div class="field"><label>Potencia mínima (CV)</label><input id="hpFilter" type="number" placeholder="100"></div>
+    </div>
+  </div>
+</section>
+
+<main id="coches" class="container">
+  <div class="section-head">
+    <div><p class="eyebrow">INVENTARIO</p><h2>Vehículos disponibles</h2></div>
+    <div class="result-tools"><span id="resultCount"></span>
+      <select id="sortFilter" onchange="renderCars()"><option value="featured">Destacados</option><option value="priceAsc">Precio: menor primero</option><option value="priceDesc">Precio: mayor primero</option><option value="kmAsc">Kilómetros: menor primero</option><option value="yearDesc">Más recientes</option></select>
+    </div>
+  </div>
+  <div class="layout">
+    <aside class="sidebar">
+      <h3>Refinar búsqueda</h3>
+      <label class="check"><input type="checkbox" onchange="toggleOnlyPhotos(this.checked)"> Solo con fotos</label>
+      <label class="check"><input type="checkbox" onchange="toggleOnlyWarranty(this.checked)"> Con garantía</label>
+      <label class="check"><input type="checkbox" onchange="toggleOnlyDealer(this.checked)" checked> Solo AutoNovaX</label>
+      <hr>
+      <p class="muted">Consejo</p><p class="small">Puedes combinar filtros y ordenar los resultados. Los favoritos se guardan en este dispositivo.</p>
+    </aside>
+    <section><div id="carsGrid" class="cars-grid"></div></section>
+  </div>
+</main>
+
+<section class="trust container">
+  <div><strong>✓ Vehículos revisados</strong><span>Información clara antes de comprar</span></div>
+  <div><strong>✓ Atención directa</strong><span>Contacto por teléfono, email y WhatsApp</span></div>
+  <div><strong>✓ AutoNovaX</strong><span>El Zapillo, Almería</span></div>
+</section>
+
+<section id="contacto" class="contact container">
+  <div><p class="eyebrow">CONTACTO</p><h2>¿Has encontrado tu coche?</h2><p>Escríbenos y te respondemos.</p></div>
+  <form action="https://formsubmit.co/autonovaxx@gmail.com" method="POST">
+    <input required name="nombre" placeholder="Nombre">
+    <input required type="tel" name="telefono" placeholder="Teléfono">
+    <input required type="email" name="email" placeholder="Email">
+    <textarea required name="vehiculo" placeholder="¿Qué vehículo te interesa?"></textarea>
+    <input type="hidden" name="_subject" value="Nueva solicitud - AutoNovaX">
+    <button class="btn btn-red">Enviar solicitud</button>
+  </form>
+</section>
+
+<footer><div><a class="logo" href="#">AutoNovaX</a><p>El Zapillo, Almería · 9:30–18:30</p></div><div><p>+34 600 23 90 91</p><p>autonovaxx@gmail.com</p></div></footer>
+
+<div id="loginModal" class="modal"><div class="modal-card"><button class="close" onclick="closeLogin()">×</button><h2>Mi AutoNovaX</h2><p class="muted">En esta primera versión, tus favoritos se guardan directamente en este dispositivo.</p><button class="btn btn-red" onclick="closeLogin()">Continuar</button></div></div>
+
+<script src="data.js"></script><script src="app.js"></script>
+</body>
+</html>

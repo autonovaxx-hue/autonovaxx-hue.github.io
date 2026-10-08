@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>AutoNovaX — Vehículo</title><link rel="stylesheet" href="styles.css"></head>
+<body>
+<header class="topbar"><a class="logo" href="index.html"><span>Auto</span>NovaX</a><nav><a href="index.html#coches">Coches</a><a href="index.html#contacto">Contacto</a></nav></header>
+<main class="container detail" id="detail"></main>
+<footer><div><a class="logo" href="index.html">AutoNovaX</a><p>El Zapillo, Almería · 9:30–18:30</p></div><div><p>+34 600 23 90 91</p><p>autonovaxx@gmail.com</p></div></footer>
+<script src="data.js"></script><script>
+const id=new URLSearchParams(location.search).get("id");const v=VEHICLES.find(x=>x.id===id)||VEHICLES[0];
+const euro=n=>new Intl.NumberFormat("es-ES",{style:"currency",currency:"EUR",maximumFractionDigits:0}).format(n);
+const img=n=>"https://autonovaxx-hue.github.io/autonovax/"+encodeURIComponent(n);
+let current=0;
+function render(){document.title="AutoNovaX — "+v.make+" "+v.model;detail.innerHTML=`
+<div class="breadcrumbs"><a href="index.html">Inicio</a> / ${v.make} ${v.model}</div>
+<div class="detail-head"><div><p class="eyebrow">${v.make}</p><h1>${v.model}</h1><p class="version">${v.version}</p></div><div class="detail-price">${euro(v.price)}</div></div>
+<div class="detail-gallery"><div id="mainImg" class="main-img" style="background-image:url('${img(v.photos[0])}')"><button onclick="prev()" class="gallery-btn left">‹</button><button onclick="next()" class="gallery-btn right">›</button><span class="photo-count">1 / ${v.photos.length}</span></div><div class="thumbs">${v.photos.map((p,i)=>`<button onclick="show(${i})" style="background-image:url('${img(p)}')"></button>`).join("")}</div></div>
+<div class="detail-grid"><section class="panel"><h2>Datos del vehículo</h2><div class="spec-grid">${Object.entries({Año:v.year,"Kilómetros":v.km.toLocaleString("es-ES")+" km",Combustible:v.fuel,Cambio:v.gear,Carrocería:v.body,Color:v.color,Potencia:v.hp+" CV",Cilindrada:v.specs.cilindrada,Tracción:v.specs.traccion,Matriculación:v.specs.matriculacion,Propietarios:v.specs.propietarios,HU:v.specs.hu,Climatización:v.specs.climatizacion}).map(([k,val])=>`<div><span>${k}</span><strong>${val}</strong></div>`).join("")}</div></section>
+<aside class="panel contact-panel"><h2>¿Te interesa?</h2><p>Habla directamente con AutoNovaX.</p><a class="btn btn-red full" href="https://wa.me/34600239091?text=${encodeURIComponent("Hola, me interesa el "+v.make+" "+v.model)}">WhatsApp</a><a class="btn btn-dark full" href="tel:+34600239091">Llamar</a><a class="btn btn-outline full" href="index.html#contacto">Solicitar información</a></aside></div>
+<section class="panel"><h2>Equipamiento</h2><div class="feature-list">${v.features.map(x=>`<span>✓ ${x}</span>`).join("")}</div></section>`;
+}
+function show(i){current=i;mainImg.style.backgroundImage=`url('${img(v.photos[i])}')`;document.querySelector(".photo-count").textContent=`${i+1} / ${v.photos.length}`;}
+function next(){show((current+1)%v.photos.length)}function prev(){show((current-1+v.photos.length)%v.photos.length)}
+render();
+</script></body></html>
