@@ -120,5 +120,45 @@
 <div id="loginModal" class="modal"><div class="modal-card"><button class="close" onclick="closeLogin()">×</button><h2>Mi AutoNovaX</h2><p class="muted">En esta primera versión, tus favoritos se guardan directamente en este dispositivo.</p><button class="btn btn-red" onclick="closeLogin()">Continuar</button></div></div>
 
 <script src="data.js"></script><script src="app.js"></script>
+  <script>
+  // Conexión segura a tu proyecto de Supabase
+  const SUPABASE_URL = 'https://pavtzvkdcmqmkklotrjo.supabase.co';
+  const SUPABASE_KEY = 'sb_publishable_5fmlYefTm_IxU6C-QMIDnQ_sJZ0Y3CW';
+  const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+  // Escuchar cuando el usuario envíe el formulario
+  document.addEventListener('DOMContentLoaded', () => {
+    const form = document.getElementById('form-publicar');
+    
+    if (form) {
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        // Recoger los datos del coche
+        const titulo = document.getElementById('titulo').value;
+        const marca = document.getElementById('marca').value;
+        const modelo = document.getElementById('modelo').value;
+        const precio = parseFloat(document.getElementById('precio').value);
+        const anio = parseInt(document.getElementById('anio').value);
+        const descripcion = document.getElementById('descripcion').value;
+
+        // Guardar el coche en la base de datos de Supabase
+        const { data, error } = await supabase
+          .from('coches')
+          .insert([
+            { titulo, marca, modelo, precio, anio, descripcion }
+          ]);
+
+        if (error) {
+          console.error('Error al guardar:', error);
+          alert('Hubo un error al publicar el coche: ' + error.message);
+        } else {
+          alert('¡Coche publicado con éxito!');
+          window.location.href = 'index.html';
+        }
+      });
+    }
+  });
+</script>
 </body>
 </html>
