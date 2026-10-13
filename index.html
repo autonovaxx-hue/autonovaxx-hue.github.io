@@ -2,20 +2,19 @@
 <html lang="es">
 <head>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8974283070093272"
-     crossorigin="anonymous"></script>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>AutoNovaX — Coches de ocasión</title>
-<meta name="description" content="AutoNovaX: portal profesional de vehículos de ocasión. Busca, filtra, compara y contacta.">
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8974283070093272" crossorigin="anonymous"></script>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>AutoNovaX — Coches de ocasión</title>
+  <meta name="description" content="AutoNovaX: portal profesional de vehículos de ocasión. Busca, filtra, compara y contacta.">
   <link rel="icon" type="image/png" href="Emblema%20Automotriz%20AN%20Autonovax.png">
-<link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 <header class="topbar">
-<a class="logo" href="https://autonovaxx-hue.github.io/">
-  <img src="Emblema%20Automotriz%20AN%20Autonovax.png" alt="AutoNovaX">
-</a>
+  <a class="logo" href="https://autonovaxx-hue.github.io/">
+    <img src="Emblema%20Automotriz%20AN%20Autonovax.png" alt="AutoNovaX">
+  </a>
   <nav>
     <a href="#coches">Coches</a>
     <a href="#favoritos">Favoritos <b id="favCount">0</b></a>
@@ -23,8 +22,11 @@
     <a href="quienes-somos.html">Quiénes somos</a>
     <a href="faq.html">FAQ</a>
     <a href="#contacto">Contacto</a>
-</nav>
-  <button class="btn btn-light" onclick="openLogin()">Iniciar sesión</button>
+  </nav>
+  <div style="display: flex; gap: 10px; align-items: center;">
+    <button class="btn btn-light" onclick="openLogin()">Iniciar sesión</button>
+    <a href="publicar.html" class="btn btn-red" style="text-decoration: none;">+ Publicar mi coche</a>
+  </div>
 </header>
 
 <section class="hero">
@@ -90,7 +92,8 @@
     <button class="btn btn-red">Enviar solicitud</button>
   </form>
 </section>
-  <footer>
+
+<footer>
   <div>
     <a class="logo" href="index.html">AutoNovaX</a>
     <p>El Zapillo, Almería · 9:30–18:30</p>
@@ -102,14 +105,12 @@
     <p>autonovaxx@gmail.com</p>
     <p>WhatsApp disponible</p>
   </div>
-
   <div>
     <p><strong>Información</strong></p>
     <p><a href="quienes-somos.html">Quiénes somos</a></p>
     <p><a href="faq.html">Preguntas frecuentes</a></p>
     <p><a href="guia-autonovax.html">Guía AutoNovaX</a></p>
   </div>
-
   <div>
     <p><strong>Legal</strong></p>
     <p><a href="aviso-legal.html">Aviso legal</a></p>
@@ -117,44 +118,81 @@
     <p><a href="politica-cookies.html">Cookies</a></p>
   </div>
 </footer>
-<div id="loginModal" class="modal"><div class="modal-card"><button class="close" onclick="closeLogin()">×</button><h2>Mi AutoNovaX</h2><p class="muted">En esta primera versión, tus favoritos se guardan directamente en este dispositivo.</p><button class="btn btn-red" onclick="closeLogin()">Continuar</button></div></div>
 
-<script src="data.js"></script><script src="app.js"></script>
-  <script>
-  // Conexión segura a tu proyecto de Supabase
+<!-- Modal de Inicio de Sesión / Registro -->
+<div id="loginModal" class="modal">
+  <div class="modal-card">
+    <button class="close" onclick="closeLogin()">×</button>
+    <h2>Mi AutoNovaX</h2>
+    <p class="muted">Accede a tu cuenta o regístrate para publicar y gestionar tus anuncios.</p>
+    
+    <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 15px;">
+      <input type="email" id="authEmail" placeholder="Correo electrónico" style="padding: 10px; border: 1px solid #ccc; border-radius: 6px;">
+      <input type="password" id="authPassword" placeholder="Contraseña" style="padding: 10px; border: 1px solid #ccc; border-radius: 6px;">
+      
+      <div style="display: flex; gap: 10px; margin-top: 10px;">
+        <button type="button" id="btnLogin" class="btn btn-red" style="flex: 1;">Entrar</button>
+        <button type="button" id="btnRegister" class="btn" style="flex: 1; background: #333; color: white;">Registrarse</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="data.js"></script>
+<script src="app.js"></script>
+
+<!-- Script de conexión a Supabase y control del Modal de Login -->
+<script>
   const SUPABASE_URL = 'https://pavtzvkdcmqmkklotrjo.supabase.co';
   const SUPABASE_KEY = 'sb_publishable_5fmlYefTm_IxU6C-QMIDnQ_sJZ0Y3CW';
   const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-  // Escuchar cuando el usuario envíe el formulario
+  // Funciones globales para abrir y cerrar el modal
+  window.openLogin = function() {
+    document.getElementById('loginModal').classList.add('open');
+  };
+  
+  window.closeLogin = function() {
+    document.getElementById('loginModal').classList.remove('open');
+  };
+
   document.addEventListener('DOMContentLoaded', () => {
-    const form = document.getElementById('form-publicar');
-    
-    if (form) {
-      form.addEventListener('submit', async (e) => {
-        e.preventDefault();
+    const btnLogin = document.getElementById('btnLogin');
+    const btnRegister = document.getElementById('btnRegister');
 
-        // Recoger los datos del coche
-        const titulo = document.getElementById('titulo').value;
-        const marca = document.getElementById('marca').value;
-        const modelo = document.getElementById('modelo').value;
-        const precio = parseFloat(document.getElementById('precio').value);
-        const anio = parseInt(document.getElementById('anio').value);
-        const descripcion = document.getElementById('descripcion').value;
+    // Manejar Inicio de Sesión
+    if (btnLogin) {
+      btnLogin.addEventListener('click', async () => {
+        const email = document.getElementById('authEmail').value;
+        const password = document.getElementById('authPassword').value;
 
-        // Guardar el coche en la base de datos de Supabase
-        const { data, error } = await supabase
-          .from('coches')
-          .insert([
-            { titulo, marca, modelo, precio, anio, descripcion }
-          ]);
+        if (!email || !password) return alert('Por favor, introduce tu correo y contraseña');
+
+        const { data, error } = await supabase.auth.signInWithPassword({ email, password });
 
         if (error) {
-          console.error('Error al guardar:', error);
-          alert('Hubo un error al publicar el coche: ' + error.message);
+          alert('Error al iniciar sesión: ' + error.message);
         } else {
-          alert('¡Coche publicado con éxito!');
-          window.location.href = 'index.html';
+          alert('¡Sesión iniciada con éxito!');
+          closeLogin();
+        }
+      });
+    }
+
+    // Manejar Registro de nuevo usuario
+    if (btnRegister) {
+      btnRegister.addEventListener('click', async () => {
+        const email = document.getElementById('authEmail').value;
+        const password = document.getElementById('authPassword').value;
+
+        if (!email || !password) return alert('Por favor, introduce tu correo y contraseña');
+
+        const { data, error } = await supabase.auth.signUp({ email, password });
+
+        if (error) {
+          alert('Error al registrarse: ' + error.message);
+        } else {
+          alert('¡Cuenta creada con éxito! Si es necesario, confirma tu correo electrónico.');
         }
       });
     }
