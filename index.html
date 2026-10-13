@@ -140,13 +140,13 @@
 
 <script src="data.js"></script>
 <script src="app.js"></script>
-
-<!-- Conexión Supabase y Autenticación Activa -->
 <script>
+  // Conexión a Supabase
   const SUPABASE_URL = 'https://pavtzvkdcmqmkklotrjo.supabase.co';
   const SUPABASE_KEY = 'sb_publishable_5fmlYefTm_IxU6C-QMIDnQ_sJZ0Y3CW';
   const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
+  // Funciones globales para abrir y cerrar el modal
   window.openLogin = function() {
     const modal = document.getElementById('loginModal');
     if (modal) modal.classList.add('open');
@@ -157,36 +157,95 @@
     if (modal) modal.classList.remove('open');
   };
 
+  // Todo el código se ejecuta cuando la página está completamente lista
   document.addEventListener('DOMContentLoaded', async () => {
+    console.log("AutoNovaX inicializado correctamente.");
+
     const btnAuthNav = document.getElementById('btnAuthNav');
     const btnLogin = document.getElementById('btnLogin');
     const btnRegister = document.getElementById('btnRegister');
 
-    // Verificar si el usuario ya tiene sesión iniciada
-    const { data: { session } } = await supabase.auth.getSession();
-    
-    if (session) {
-      if (btnAuthNav) {
-        btnAuthNav.textContent = 'Cerrar sesión (' + session.user.email.split('@')[0] + ')';
+    // 1. Comprobar si hay sesión activa al cargar la página
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session && btnAuthNav) {
+        btnAuthNav.textContent = 'Cerrar sesión';
         btnAuthNav.onclick = async () => {
           await supabase.auth.signOut();
-          alert('Sesión cerrada');
+          alert('Has cerrado sesión.');
           location.reload();
         };
       }
+    } catch (err) {
+      console.error("Error al comprobar sesión:", err);
     }
 
-    // 1. Iniciar Sesión
+    // 2. Evento para el botón de Entrar
     if (btnLogin) {
       btnLogin.addEventListener('click', async () => {
-        const email = document.getElementById('authEmail').value.trim();
-        const password = document.getElementById('authPassword').value;
+        const emailInput = document.getElementById('authEmail');
+        const passwordInput = document.getElementById('authPassword');
+        
+        if (!emailInput || !passwordInput) {
+          alert('Error: No se encuentran los campos de texto.');
+          return;
+        }
 
-        if (!email || !password) return alert('Introduce correo y contraseña.');
+        const email = emailInput.value.trim();
+        const password = passwordInput.value;
 
+        if (!email || !password) {
+          alert('Por favor, introduce tu correo y contraseña.');
+          return;
+        }
+
+        console.log("Intentando iniciar sesión con:", email);
         const { data, error } = await supabase.auth.signInWithPassword({ email, password });
 
         if (error) {
           alert('Error al iniciar sesión: ' + error.message);
         } else {
           alert('¡Sesión iniciada con éxito!');
+          closeLogin();
+          location.reload();
+        }
+      });
+    }
+
+    // 3. Evento para el botón de Registrarse
+    if (btnRegister) {
+      btnRegister.addEventListener('click', async () => {
+        const emailInput = document.getElementById('authEmail');
+        const passwordInput = document.getElementById('authPassword');
+
+        if (!emailInput || !passwordInput) {
+          alert('Error: No se encuentran los campos de texto.');
+          return;
+        }
+
+        const email = emailInput.value.trim();
+        const password = passwordInput.value;
+
+        if (!email || !password) {
+          alert('Por favor, introduce un correo y contraseña.');
+          return;
+        }
+
+        if (password.length < 6) {
+          alert('La contraseña debe tener al menos 6 caracteres.');
+          return;
+        }
+
+        console.log("Intentando registrar a:", email);
+        const { data, error } = await supabase.auth.signUp({ email, password });
+
+        if (error) {
+          alert('Error en el registro: ' + error.message);
+        } else {
+          alert('¡Cuenta registrada con éxito! Ya puedes iniciar sesión.');
+          closeLogin();
+        }
+      });
+    }
+  });
+</script>
