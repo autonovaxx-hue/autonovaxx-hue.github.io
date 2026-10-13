@@ -119,7 +119,7 @@
   </div>
 </footer>
 
-<!-- Modal de Inicio de Sesión / Registro -->
+<!-- Modal de Inicio de Sesión y Registro -->
 <div id="loginModal" class="modal">
   <div class="modal-card">
     <button class="close" onclick="closeLogin()">×</button>
@@ -128,7 +128,7 @@
     
     <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 15px;">
       <input type="email" id="authEmail" placeholder="Correo electrónico" style="padding: 10px; border: 1px solid #ccc; border-radius: 6px;">
-      <input type="password" id="authPassword" placeholder="Contraseña" style="padding: 10px; border: 1px solid #ccc; border-radius: 6px;">
+      <input type="password" id="authPassword" placeholder="Contraseña (mínimo 6 caracteres)" style="padding: 10px; border: 1px solid #ccc; border-radius: 6px;">
       
       <div style="display: flex; gap: 10px; margin-top: 10px;">
         <button type="button" id="btnLogin" class="btn btn-red" style="flex: 1;">Entrar</button>
@@ -141,32 +141,36 @@
 <script src="data.js"></script>
 <script src="app.js"></script>
 
-<!-- Script de conexión a Supabase y control del Modal de Login -->
+<!-- Conexión Supabase y Funciones de Autenticación -->
 <script>
   const SUPABASE_URL = 'https://pavtzvkdcmqmkklotrjo.supabase.co';
   const SUPABASE_KEY = 'sb_publishable_5fmlYefTm_IxU6C-QMIDnQ_sJZ0Y3CW';
   const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-  // Funciones globales para abrir y cerrar el modal
+  // Funciones para el Modal
   window.openLogin = function() {
-    document.getElementById('loginModal').classList.add('open');
+    const modal = document.getElementById('loginModal');
+    if (modal) modal.classList.add('open');
   };
   
   window.closeLogin = function() {
-    document.getElementById('loginModal').classList.remove('open');
+    const modal = document.getElementById('loginModal');
+    if (modal) modal.classList.remove('open');
   };
 
   document.addEventListener('DOMContentLoaded', () => {
     const btnLogin = document.getElementById('btnLogin');
     const btnRegister = document.getElementById('btnRegister');
 
-    // Manejar Inicio de Sesión
+    // 1. Manejar Inicio de Sesión
     if (btnLogin) {
       btnLogin.addEventListener('click', async () => {
-        const email = document.getElementById('authEmail').value;
+        const email = document.getElementById('authEmail').value.trim();
         const password = document.getElementById('authPassword').value;
 
-        if (!email || !password) return alert('Por favor, introduce tu correo y contraseña');
+        if (!email || !password) {
+          return alert('Por favor, introduce tu correo y contraseña.');
+        }
 
         const { data, error } = await supabase.auth.signInWithPassword({ email, password });
 
@@ -179,20 +183,30 @@
       });
     }
 
-    // Manejar Registro de nuevo usuario
+    // 2. Manejar Registro de Usuario
     if (btnRegister) {
       btnRegister.addEventListener('click', async () => {
-        const email = document.getElementById('authEmail').value;
+        const email = document.getElementById('authEmail').value.trim();
         const password = document.getElementById('authPassword').value;
 
-        if (!email || !password) return alert('Por favor, introduce tu correo y contraseña');
+        if (!email || !password) {
+          return alert('Por favor, introduce un correo y contraseña.');
+        }
+
+        if (password.length < 6) {
+          return alert('La contraseña debe tener al menos 6 caracteres.');
+        }
 
         const { data, error } = await supabase.auth.signUp({ email, password });
 
         if (error) {
-          alert('Error al registrarse: ' + error.message);
+          alert('Error en el registro: ' + error.message);
+        } else if (data.user && data.session) {
+          alert('¡Cuenta creada e inicio de sesión automático!');
+          closeLogin();
         } else {
-          alert('¡Cuenta creada con éxito! Si es necesario, confirma tu correo electrónico.');
+          alert('¡Cuenta registrada con éxito! Si la confirmación por correo está activa en tu Supabase, revisa tu correo electrónico para activarla.');
+          closeLogin();
         }
       });
     }
