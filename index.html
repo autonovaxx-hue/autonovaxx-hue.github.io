@@ -24,7 +24,7 @@
     <a href="#contacto">Contacto</a>
   </nav>
   <div style="display: flex; gap: 10px; align-items: center;">
-    <button class="btn btn-light" onclick="openLogin()">Iniciar sesión</button>
+    <button id="btnAuthNav" class="btn btn-light" onclick="openLogin()">Iniciar sesión</button>
     <a href="publicar.html" class="btn btn-red" style="text-decoration: none;">+ Publicar mi coche</a>
   </div>
 </header>
@@ -141,13 +141,12 @@
 <script src="data.js"></script>
 <script src="app.js"></script>
 
-<!-- Conexión Supabase y Funciones de Autenticación -->
+<!-- Conexión Supabase y Autenticación Activa -->
 <script>
   const SUPABASE_URL = 'https://pavtzvkdcmqmkklotrjo.supabase.co';
   const SUPABASE_KEY = 'sb_publishable_5fmlYefTm_IxU6C-QMIDnQ_sJZ0Y3CW';
   const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-  // Funciones para el Modal
   window.openLogin = function() {
     const modal = document.getElementById('loginModal');
     if (modal) modal.classList.add('open');
@@ -158,19 +157,32 @@
     if (modal) modal.classList.remove('open');
   };
 
-  document.addEventListener('DOMContentLoaded', () => {
+  document.addEventListener('DOMContentLoaded', async () => {
+    const btnAuthNav = document.getElementById('btnAuthNav');
     const btnLogin = document.getElementById('btnLogin');
     const btnRegister = document.getElementById('btnRegister');
 
-    // 1. Manejar Inicio de Sesión
+    // Verificar si el usuario ya tiene sesión iniciada
+    const { data: { session } } = await supabase.auth.getSession();
+    
+    if (session) {
+      if (btnAuthNav) {
+        btnAuthNav.textContent = 'Cerrar sesión (' + session.user.email.split('@')[0] + ')';
+        btnAuthNav.onclick = async () => {
+          await supabase.auth.signOut();
+          alert('Sesión cerrada');
+          location.reload();
+        };
+      }
+    }
+
+    // 1. Iniciar Sesión
     if (btnLogin) {
       btnLogin.addEventListener('click', async () => {
         const email = document.getElementById('authEmail').value.trim();
         const password = document.getElementById('authPassword').value;
 
-        if (!email || !password) {
-          return alert('Por favor, introduce tu correo y contraseña.');
-        }
+        if (!email || !password) return alert('Introduce correo y contraseña.');
 
         const { data, error } = await supabase.auth.signInWithPassword({ email, password });
 
@@ -178,39 +190,3 @@
           alert('Error al iniciar sesión: ' + error.message);
         } else {
           alert('¡Sesión iniciada con éxito!');
-          closeLogin();
-        }
-      });
-    }
-
-    // 2. Manejar Registro de Usuario
-    if (btnRegister) {
-      btnRegister.addEventListener('click', async () => {
-        const email = document.getElementById('authEmail').value.trim();
-        const password = document.getElementById('authPassword').value;
-
-        if (!email || !password) {
-          return alert('Por favor, introduce un correo y contraseña.');
-        }
-
-        if (password.length < 6) {
-          return alert('La contraseña debe tener al menos 6 caracteres.');
-        }
-
-        const { data, error } = await supabase.auth.signUp({ email, password });
-
-        if (error) {
-          alert('Error en el registro: ' + error.message);
-        } else if (data.user && data.session) {
-          alert('¡Cuenta creada e inicio de sesión automático!');
-          closeLogin();
-        } else {
-          alert('¡Cuenta registrada con éxito! Si la confirmación por correo está activa en tu Supabase, revisa tu correo electrónico para activarla.');
-          closeLogin();
-        }
-      });
-    }
-  });
-</script>
-</body>
-</html>
