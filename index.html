@@ -1,3 +1,4 @@
+
 <!doctype html>
 <html lang="es">
 <head>
@@ -58,7 +59,13 @@
   <div class="section-head">
     <div><p class="eyebrow">INVENTARIO</p><h2>Vehículos disponibles</h2></div>
     <div class="result-tools"><span id="resultCount"></span>
-      <select id="sortFilter" onchange="renderCars()"><option value="featured">Destacados</option><option value="priceAsc">Precio: menor primero</option><option value="priceDesc">Precio: mayor primero</option><option value="kmAsc">Kilómetros: menor primero</option><option value="yearDesc">Más recientes</option></select>
+      <select id="sortFilter" onchange="renderCars()">
+        <option value="featured">Destacados</option>
+        <option value="priceAsc">Precio: menor primero</option>
+        <option value="priceDesc">Precio: mayor primero</option>
+        <option value="kmAsc">Kilómetros: menor primero</option>
+        <option value="yearDesc">Más recientes</option>
+      </select>
     </div>
   </div>
   <div class="layout">
@@ -68,7 +75,8 @@
       <label class="check"><input type="checkbox" onchange="toggleOnlyWarranty(this.checked)"> Con garantía</label>
       <label class="check"><input type="checkbox" onchange="toggleOnlyDealer(this.checked)" checked> Solo AutoNovaX</label>
       <hr>
-      <p class="muted">Consejo</p><p class="small">Puedes combinar filtros y ordenar los resultados. Los favoritos se guardan en este dispositivo.</p>
+      <p class="muted">Consejo</p>
+      <p class="small">Puedes combinar filtros y ordenar los resultados. Los favoritos se guardan en este dispositivo.</p>
     </aside>
     <section><div id="carsGrid" class="cars-grid"></div></section>
   </div>
@@ -81,7 +89,11 @@
 </section>
 
 <section id="contacto" class="contact container">
-  <div><p class="eyebrow">CONTACTO</p><h2>¿Has encontrado tu coche?</h2><p>Escríbenos y te respondemos.</p></div>
+  <div>
+    <p class="eyebrow">CONTACTO</p>
+    <h2>¿Has encontrado tu coche?</h2>
+    <p>Escríbenos y te respondemos.</p>
+  </div>
   <form action="https://formsubmit.co/autonovaxx@gmail.com" method="POST">
     <input required name="nombre" placeholder="Nombre">
     <input required type="tel" name="telefono" placeholder="Teléfono">
@@ -119,17 +131,17 @@
   </div>
 </footer>
 
-<!-- Modal de Inicio de Sesión y Registro -->
+<!-- Modal de inicio de sesión y registro -->
 <div id="loginModal" class="modal">
   <div class="modal-card">
     <button class="close" onclick="closeLogin()">×</button>
     <h2>Mi AutoNovaX</h2>
     <p class="muted">Accede a tu cuenta o regístrate para publicar y gestionar tus anuncios.</p>
-    
+
     <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 15px;">
       <input type="email" id="authEmail" placeholder="Correo electrónico" style="padding: 10px; border: 1px solid #ccc; border-radius: 6px;">
-      <input type="password" id="authPassword" placeholder="Contraseña (mínimo 6 caracteres)" style="padding: 10px; border: 1px solid #ccc; border-radius: 6px;">
-      
+      <input type="password" id="authPassword" placeholder="Contraseña (mínimo 8 caracteres)" style="padding: 10px; border: 1px solid #ccc; border-radius: 6px;">
+
       <div style="display: flex; gap: 10px; margin-top: 10px;">
         <button type="button" id="btnLogin" class="btn btn-red" style="flex: 1;">Entrar</button>
         <button type="button" id="btnRegister" class="btn" style="flex: 1; background: #333; color: white;">Registrarse</button>
@@ -146,61 +158,60 @@
   const SUPABASE_KEY = 'sb_publishable_5fmlYefTm_IxU6C-QMIDnQ_sJZ0Y3CW';
   const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-  // Funciones globales para abrir y cerrar el modal
+  // Abrir y cerrar el modal
   window.openLogin = function() {
     const modal = document.getElementById('loginModal');
     if (modal) modal.classList.add('open');
   };
-  
+
   window.closeLogin = function() {
     const modal = document.getElementById('loginModal');
     if (modal) modal.classList.remove('open');
   };
 
-  // Todo el código se ejecuta cuando la página está completamente lista
   document.addEventListener('DOMContentLoaded', async () => {
-    console.log("AutoNovaX inicializado correctamente.");
+    console.log('AutoNovaX inicializado correctamente.');
 
     const btnAuthNav = document.getElementById('btnAuthNav');
     const btnLogin = document.getElementById('btnLogin');
     const btnRegister = document.getElementById('btnRegister');
 
-    // 1. Comprobar si hay sesión activa al cargar la página
+    // Comprobar si existe una sesión activa
     try {
-      const { data: { session } } = await supabase.auth.getSession();
+      const { data: { session }, error } = await supabase.auth.getSession();
+      if (error) throw error;
+
       if (session && btnAuthNav) {
         btnAuthNav.textContent = 'Cerrar sesión';
         btnAuthNav.onclick = async () => {
-          await supabase.auth.signOut();
+          const { error: signOutError } = await supabase.auth.signOut();
+          if (signOutError) {
+            alert('No se pudo cerrar sesión: ' + signOutError.message);
+            return;
+          }
           alert('Has cerrado sesión.');
           location.reload();
         };
       }
     } catch (err) {
-      console.error("Error al comprobar sesión:", err);
+      console.error('Error al comprobar sesión:', err);
     }
 
-    // 2. Evento para el botón de Entrar
+    // Iniciar sesión
     if (btnLogin) {
       btnLogin.addEventListener('click', async () => {
         const emailInput = document.getElementById('authEmail');
         const passwordInput = document.getElementById('authPassword');
-        
-        if (!emailInput || !passwordInput) {
-          alert('Error: No se encuentran los campos de texto.');
-          return;
-        }
 
-        const email = emailInput.value.trim();
-        const password = passwordInput.value;
+        const email = emailInput?.value.trim();
+        const password = passwordInput?.value;
 
         if (!email || !password) {
           alert('Por favor, introduce tu correo y contraseña.');
           return;
         }
 
-        console.log("Intentando iniciar sesión con:", email);
-        const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+        const { error } = await supabase.auth.signInWithPassword({ email, password });
 
         if (error) {
           alert('Error al iniciar sesión: ' + error.message);
@@ -212,40 +223,36 @@
       });
     }
 
-    // 3. Evento para el botón de Registrarse
+    // Registrar una cuenta
     if (btnRegister) {
       btnRegister.addEventListener('click', async () => {
         const emailInput = document.getElementById('authEmail');
         const passwordInput = document.getElementById('authPassword');
 
-        if (!emailInput || !passwordInput) {
-          alert('Error: No se encuentran los campos de texto.');
-          return;
-        }
-
-        const email = emailInput.value.trim();
-        const password = passwordInput.value;
+        const email = emailInput?.value.trim();
+        const password = passwordInput?.value;
 
         if (!email || !password) {
           alert('Por favor, introduce un correo y contraseña.');
           return;
         }
 
-        if (password.length < 6) {
-          alert('La contraseña debe tener al menos 6 caracteres.');
+        if (password.length < 8) {
+          alert('La contraseña debe tener al menos 8 caracteres.');
           return;
         }
 
-        console.log("Intentando registrar a:", email);
-        const { data, error } = await supabase.auth.signUp({ email, password });
+        const { error } = await supabase.auth.signUp({ email, password });
 
         if (error) {
           alert('Error en el registro: ' + error.message);
         } else {
-          alert('¡Cuenta registrada con éxito! Ya puedes iniciar sesión.');
+          alert('Solicitud de registro enviada. Si tienes que confirmar el correo, revisa tu bandeja de entrada antes de iniciar sesión.');
           closeLogin();
         }
       });
     }
   });
 </script>
+</body>
+</html>
